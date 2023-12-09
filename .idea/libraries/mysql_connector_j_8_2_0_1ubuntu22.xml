@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="mysql-connector-j_8.2.0-1ubuntu22">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../mysql-connector-j_8.2.0-1ubuntu22.04_all" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,4 +1,12 @@
+import db.DatabaseManager;
+
 public class Main {
+
+    static final String DATABASE_HOST = "localhost";
+    static final String DATABASE_USER = "root";
+    static final String DATABASE_PASSWORD = "root";
+    static final String DATABASE_NAME = "movie_rental_prototype";
+
     public static void main(String[] args) {
         /*
         TODO:
@@ -15,6 +23,14 @@ public class Main {
             Making the code easily adaptable to, and implementing, other/variable rental durations e.g. can rent for 1 day or 1 week.
             Making the code easily adaptable to, and implementing, data persistence, such as a database.
          */
-        System.out.println("Hello world!");
+
+        DatabaseManager databaseManager = new DatabaseManager();
+
+        // Start a new connection with the database
+
+        if (!databaseManager.connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_NAME)) {
+            throw new RuntimeException("Unable to connect to the database: check your connection! ");
+        }
+
     }
 }
