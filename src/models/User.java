@@ -1,5 +1,7 @@
 package models;
 
+import interfaces.AccountTypeInterface;
+
 import java.util.Date;
 
 public class User {
@@ -8,6 +10,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String password;
+    private AccountType accountType;
     private Date createdOn;
 
 
@@ -59,5 +62,13 @@ public class User {
     public void setCreatedOn(Date createdOn) {
 
         this.createdOn = createdOn;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
+
+    public AccountTypeInterface getAccountType() {
+        return accountType;
     }
 }
