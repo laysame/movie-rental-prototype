@@ -7,6 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="mysql-connector-j_8.2.0-1ubuntu22" level="project" />
+    <orderEntry type="library" name="mysql.connector.j" level="project" />
   </component>
 </module>

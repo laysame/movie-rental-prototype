@@ -1,4 +1,4 @@
 package exceptions;
 
-public class UsernameAlreadyUsedException extends RuntimeException{
+public class UsernameAlreadyUsedException extends RuntimeException {
 }

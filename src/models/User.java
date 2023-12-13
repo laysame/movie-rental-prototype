@@ -5,21 +5,19 @@ import interfaces.AccountTypeInterface;
 import java.util.Date;
 
 public class User {
-    private int userId;
+    private int id;
     private String username;
     private String firstName;
     private String lastName;
     private String password;
-    private AccountType accountType;
     private Date createdOn;
 
-
-    public int getUserId() {
-        return userId;
+    public int getId() {
+        return id;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -55,20 +53,10 @@ public class User {
     }
 
     public Date getCreatedOn() {
-
         return createdOn;
     }
 
     public void setCreatedOn(Date createdOn) {
-
         this.createdOn = createdOn;
-    }
-
-    public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
-    }
-
-    public AccountTypeInterface getAccountType() {
-        return accountType;
     }
 }

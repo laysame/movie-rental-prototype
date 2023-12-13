@@ -1,4 +1,4 @@
 package exceptions;
 
-public class InvalidUsernameOrPasswordException extends RuntimeException{
+public class InvalidUsernameOrPasswordException extends RuntimeException {
 }
