@@ -86,6 +86,7 @@ public class DatabaseManager implements DatabaseManagerInterface {
             resultSet.next();
 
             User user = new User();
+            user.setId(resultSet.getInt("id"));
             user.setUsername(resultSet.getString("username"));
             user.setPassword(resultSet.getString("password"));
             user.setFirstName(resultSet.getString("first_name"));
@@ -211,6 +212,28 @@ public class DatabaseManager implements DatabaseManagerInterface {
         }
     }
 
+    public List<Movie> getTopFiveRentedMovies() {
+        List<Movie> movies = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute("USE " + database);
+
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT movie_id FROM rental WHERE started_on > NOW() - 5 * 60 GROUP BY movie_id ORDER BY COUNT(*) DESC;");
+
+            while (resultSet.next()) {
+                Movie movie = getMovie(resultSet.getInt("movie_id"));
+                movies.add(movie);
+            }
+
+            return movies;
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
     public void addRental(Rental rental) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -235,9 +258,9 @@ public class DatabaseManager implements DatabaseManagerInterface {
             Statement statement = connection.createStatement();
             statement.execute("USE " + database);
             statement.execute("UPDATE rental SET user_id = '" + rental.getUser().getId() + "', movie_id = '" + rental.getMovie().getId() + "', started_on = '" +
-                            dateFormat.format(rental.getStartedOn()) + "', ended_on = " +
-                            (rental.getEndedOn() != null ? "'" + dateFormat.format(rental.getEndedOn()) + "'" : "NULL") +
-                            ", total_price = " + rental.getTotalPrice() + " WHERE id = " + rental.getId() + ";");
+                    dateFormat.format(rental.getStartedOn()) + "', ended_on = " +
+                    (rental.getEndedOn() != null ? "'" + dateFormat.format(rental.getEndedOn()) + "'" : "NULL") +
+                    ", total_price = " + rental.getTotalPrice() + " WHERE id = " + rental.getId() + ";");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -259,9 +282,13 @@ public class DatabaseManager implements DatabaseManagerInterface {
                 rental.setId(resultSet.getInt("id"));
                 rental.setUser(getUser(resultSet.getInt("user_id")));
                 rental.setMovie(getMovie(resultSet.getInt("movie_id")));
-                rental.setStartedOn(resultSet.getDate("started_on"));
-                rental.setEndedOn(resultSet.getDate("ended_on"));
-                rental.setTotalPrice(resultSet.getFloat("total_price"));
+                rental.setStartedOn(new Date(resultSet.getTimestamp("started_on").getTime()));
+
+                if (resultSet.getTimestamp("ended_on") != null) {
+                    rental.setEndedOn(new Date(resultSet.getTimestamp("ended_on").getTime()));
+                    rental.setTotalPrice(resultSet.getFloat("total_price"));
+                }
+
                 rentals.add(rental);
             }
 

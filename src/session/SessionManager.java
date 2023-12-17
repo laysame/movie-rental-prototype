@@ -115,9 +115,10 @@ public class SessionManager implements SessionManagerInterface {
         System.out.println("Select an option:");
         System.out.println("1. Rent a movie");
         System.out.println("2. Return a movie");
-        System.out.println("3. Exit");
+        System.out.println("3. Show top 5 rented movies");
+        System.out.println("4. Exit");
 
-        int choice = dataInput.askInteger("Enter your choice:", 1, 3);
+        int choice = dataInput.askInteger("Enter your choice:", 1, 4);
 
         switch (choice) {
             case 1: {
@@ -131,6 +132,11 @@ public class SessionManager implements SessionManagerInterface {
             }
 
             case 3: {
+                showTopFiveRentedMovies();
+                break;
+            }
+
+            case 4: {
                 System.exit(0);
             }
         }
@@ -144,15 +150,15 @@ public class SessionManager implements SessionManagerInterface {
 
         for (int i = 0; i < movies.size(); i++) {
             Movie movie = movies.get(i);
-            System.out.println(i + ". " + movie.getTitle() + " - €" + movie.getPrice());
+            System.out.println((i + 1) + ". " + movie.getTitle() + " - €" + movie.getPrice());
         }
 
-        System.out.println(movies.size() + ". Exit");
+        System.out.println((movies.size() + 1) + ". Exit");
 
-        int choice = dataInput.askInteger("Enter your choice:", 1, movies.size() - 1);
+        int choice = dataInput.askInteger("Enter your choice:", 0, movies.size() + 1);
 
-        if (choice < movies.size()) {
-            Movie movie = movies.get(choice);
+        if (choice <= movies.size()) {
+            Movie movie = movies.get(choice - 1);
 
             Rental rental = new Rental();
             rental.setUser(currentUser);
@@ -166,7 +172,8 @@ public class SessionManager implements SessionManagerInterface {
             System.out.println("Here is your copy of '" + movie.getTitle() + "'. Thank you for choosing us!");
         }
 
-        System.exit(0);
+        // Return to the main menu
+        showUserActionMenu();
     }
 
     public void showReturnMovieMenu() {
@@ -174,7 +181,9 @@ public class SessionManager implements SessionManagerInterface {
 
         if (rentals.size() == 0) {
             System.out.println("You have already returned all the movies!");
-            System.exit(0);
+
+            // Return to the main menu
+            showUserActionMenu();
         }
 
         System.out.println("==== Action Menu ====");
@@ -182,12 +191,59 @@ public class SessionManager implements SessionManagerInterface {
 
         for (int i = 0; i < rentals.size(); i++) {
             Movie movie = rentals.get(i).getMovie();
-            System.out.println(i + ". " + movie.getTitle());
+            System.out.println((i + 1) + ". " + movie.getTitle());
         }
 
-        System.out.println(rentals.size() + ". Exit");
+        System.out.println((rentals.size() + 1) + ". Exit");
 
-        int choice = dataInput.askInteger("Enter your choice:", 1, rentals.size() - 1);
+        int choice = dataInput.askInteger("Enter your choice:", 1, rentals.size() + 1);
 
+        if (choice <= rentals.size()) {
+            Rental selectedRental = rentals.get(choice - 1);
+
+            // Calculate total price based on rental duration and movie price
+            long rentalDurationMillis = System.currentTimeMillis() - selectedRental.getStartedOn().getTime();
+            long rentalDurationMinutes = rentalDurationMillis / (1000 * 60);
+
+            // Make sure we charge at least a minute for the rental
+            if (rentalDurationMinutes < 1) {
+                rentalDurationMinutes = 1;
+            }
+
+            float totalPrice = selectedRental.getMovie().getPrice() * rentalDurationMinutes;
+
+            // Update the selected rental with the total price and end date
+            selectedRental.setEndedOn(new Date());
+            selectedRental.setTotalPrice(totalPrice);
+            databaseManager.updateRental(selectedRental);
+
+            // Display a message with the total price and confirmation
+            System.out.println("You have returned '" + selectedRental.getMovie().getTitle() +
+                    "'. Total Price: €" + String.format("%.2f", totalPrice));
+        }
+
+        // Return to the main menu
+        showUserActionMenu();
+    }
+
+    public void showTopFiveRentedMovies() {
+        List<Movie> movies = databaseManager.getTopFiveRentedMovies();
+
+        if (movies.size() == 0) {
+            System.out.println("There is no movies rented in the last 5 minutes!");
+
+            // Return to the main menu
+            showUserActionMenu();
+        }
+
+        System.out.println("Here is the top 5 rented movies from the last 5 minutes:");
+
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
+            System.out.println((i + 1) + ". " + movie.getTitle());
+        }
+
+        // Return to the main menu
+        showUserActionMenu();
     }
 }

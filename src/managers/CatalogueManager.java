@@ -33,7 +33,7 @@ public class CatalogueManager {
                 movie.setTitle(row[1]);
                 movie.setPrice(Float.parseFloat(row[2]));
 
-                System.out.println("Load '" + movie.getTitle() + "' into database ...");
+                System.out.println("Loading '" + movie.getTitle() + "' into database ...");
 
                 try {
                     databaseManager.addMovie(movie);
