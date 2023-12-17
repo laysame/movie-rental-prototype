@@ -1,7 +1,5 @@
 package models;
 
-import interfaces.AccountTypeInterface;
-
 import java.util.Date;
 
 public class User {

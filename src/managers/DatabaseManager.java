@@ -19,15 +19,13 @@ public class DatabaseManager implements DatabaseManagerInterface {
     private Connection connection;
     private String database;
 
-    private Statement statement;
-
     @Override
     public boolean connect(String host, String user, String password, String database) {
         this.database = database;
 
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + host + "/", user, password);
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
             // Switch to the specified database
             statement.execute("USE " + database);
